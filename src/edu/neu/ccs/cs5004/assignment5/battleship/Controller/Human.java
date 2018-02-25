@@ -33,7 +33,7 @@ public class Human extends AbstractPlayer implements Player {
       System.out.println("Generate random fleet map for Player now.");
       ifleetMap.randomPlaceShip();
     } else {
-      finishPlaceShip(reader);
+    	userPlaceAllShips(reader);
     }
   }
 
@@ -124,7 +124,7 @@ Ship chooseShipType(ReadConsole reader){
   return ship;
 }
 
-  void finishPlaceShip(ReadConsole reader) {
+  void userPlaceAllShips(ReadConsole reader) {
 
     while (ifleetMap.getCountBattleship() != ifleetMap.getBattleshipNum()
         || ifleetMap.getCountCruiser() != ifleetMap.getCruiserNum()
