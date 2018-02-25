@@ -11,7 +11,7 @@ public interface IfleetMap extends Map {
    *
    * @return
    */
-  static IfleetMap generateEmptyMap() {
+  public static IfleetMap generateEmptyMap() {
     return new FleetMap();
   }
 

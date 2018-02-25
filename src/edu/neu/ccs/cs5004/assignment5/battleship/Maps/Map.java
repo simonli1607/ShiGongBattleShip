@@ -19,7 +19,7 @@ public interface Map {
    *
    * @return
    */
-  static FleetMap generateEmptyFleetMap() {
+  public static FleetMap generateEmptyFleetMap() {
     return new FleetMap();
   }
 
