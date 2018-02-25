@@ -15,21 +15,26 @@ public class ReadConsole {
 
   public static void main(String[] args) {
 
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    try {
-
-      input = br.readLine();
-
-      if ("q".equals(input)) {
-        System.out.println("Exit!");
-        System.exit(0);
-      }
-
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-    }
+    ReadConsole.readFromConsole(args);
 
   }
+  
+    public static void readFromConsole(String[] args) {
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try {
+
+			input = br.readLine();
+
+			if ("q".equals(input)) {
+				System.out.println("Exit!");
+				System.exit(0);
+			}
+
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+	}
 
   public static void wrongInput() {
     System.out.println(RealGame.ANSI_RED + "Incorrect input! Please enter again!"
@@ -47,7 +52,7 @@ public class ReadConsole {
     boolean factor = true;
 
     while (factor == true) {
-      main(null);
+    	ReadConsole.readFromConsole(null);
 
       String input = getInput();
       char[] str = input.toCharArray();
@@ -79,7 +84,7 @@ public class ReadConsole {
 //get a valid int (from start to end)
   public int inputNum(int start, int end){
     while (true) {
-      main(null);
+      ReadConsole.readFromConsole(null);
       if (getInput().length() == 1 && getInput().charAt(0) >= start + 48
           && getInput().charAt(0) <= end + 48) {
         return Integer.parseInt(getInput());
