@@ -141,14 +141,31 @@ Ship chooseShipType(ReadConsole reader){
   public Integer humanTurn(ReadConsole reader, Computer computer, Integer sunkShipNum) {
     System.out.println("Player's turn:");
     System.out.println("Please enter the location you want to attack:");
-    int location[] = reader.inputLocation();
-    Row row = Row.values()[location[1]];
-    Column col = Column.values()[location[0]];
-
+    boolean flag = true;
+    Row row = null;
+    Column col = null;
+    while(flag) {
+    	try {
+	    	int location[] = reader.inputLocation();
+	    	row = Row.values()[location[1]];
+	    	col = Column.values()[location[0]];
+	    	boolean isCellHitBefore = computer.getIfleetMap().getMap(row, col).getIsHit();
+	    	if (isCellHitBefore) {
+	    		throw new CellHasBeenHitByUserException();
+	    	}
+	    	flag = false;
+    	} catch(CellHasBeenHitByUserException e) {
+    		System.out.println("You attached this cell before, please choose a different one");
+    	}
+    }
+    
     int sunkCount = computer.getIfleetMap().attack(row, col, sunkShipNum);
     this.getIbattleMap().attack(computer, row, col);
     return sunkCount;
 
+  }
+  
+  public class CellHasBeenHitByUserException extends Exception{	  
   }
 
 }
