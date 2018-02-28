@@ -29,7 +29,7 @@ public class Computer extends AbstractPlayer implements Player {
 
   public PlayerAttackResult computerTurn(Human human, Integer sunkShipNum, PlayerAttackResult previousResult) {
     System.out.println("Computer's turn:");
-    Coordinate coordinate = strategy.generateAttackCoordinate(human.ifleetMap, previousResult.isHit(), previousResult.isShipSunk());
+    Coordinate coordinate = strategy.generateAttackCoordinate(previousResult.isHit(), previousResult.isShipSunk());
         System.out.println("Computer choose to attack " + (char)(coordinate.getColumn().ordinal() + 65) + (coordinate.getRow().ordinal
             () + 1));
         int sunkCount = human.getIfleetMap().attack(coordinate.getRow(), coordinate.getColumn(), sunkShipNum);

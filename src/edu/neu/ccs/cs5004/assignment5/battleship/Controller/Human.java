@@ -148,7 +148,7 @@ Ship chooseShipType(ReadConsole reader){
   public PlayerAttackResult humanTurn(ReadConsole reader, Computer computer, Integer sunkShipNum, PlayerAttackResult previousResult) {
     System.out.println("Player's turn:");
 
-    Coordinate coordinate = strategy.generateAttackCoordinate(computer.ifleetMap, previousResult.isHit(), previousResult.isShipSunk());
+    Coordinate coordinate = strategy.generateAttackCoordinate(previousResult.isHit(), previousResult.isShipSunk());
     System.out.println("Player choose to attack " + (char)(coordinate.getColumn().ordinal() + 65) + (coordinate.getRow().ordinal
             () + 1));
     int sunkCount = computer.getIfleetMap().attack(coordinate.getRow(), coordinate.getColumn(), sunkShipNum);

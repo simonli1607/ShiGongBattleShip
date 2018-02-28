@@ -38,10 +38,6 @@ public class SmartStrategy implements Strategy {
   
   private StrategyDirection previousDirection;
 
-
-  private boolean isGapCell(Coordinate coordinate) {
-    return false;
-  }
   
   private IbattleMap myBattleMap;
   
@@ -64,7 +60,14 @@ public class SmartStrategy implements Strategy {
 	  return true;
 	  
   }
+
+  private boolean isGapCell(Coordinate coordinate ) {
+    return isGapCell(coordinate.getRow(), coordinate.getColumn());
+  }
   
+  /*
+   * This should only be called in random hit mode
+   */
   private boolean isGapCell(Row row, Column col) {
 	  int rowIndex = row.ordinal();
 	  int colIndex =col.ordinal();
@@ -115,7 +118,7 @@ public class SmartStrategy implements Strategy {
 	  return false;
   }
   
-  private Coordinate randomHitMode(IfleetMap enemyFleetMap) {
+  private Coordinate randomHitMode() {
 	  boolean flag = true;
 	  Row row = null;
 	  Column col = null;
@@ -124,22 +127,22 @@ public class SmartStrategy implements Strategy {
 	      row = Row.values()[rand.nextInt(10)];
 	      col = Column.values()[rand.nextInt(10)];
 	      
-		  /*
-		   * Uncomment for testing with user input
-		  System.out.println("Debug random mode: ");
-		  int location[] = new ReadConsole().inputLocation();
-	      row = Row.values()[location[1]];
-	      col = Column.values()[location[0]];
-	      */
 		  
-		  if (!this.isGapCell(row, col) && !enemyFleetMap.getMap(row, col).getIsHit()) {
+		  //Uncomment for testing with user input
+		  //System.out.println("Debug random mode: ");
+		  //int location[] = new ReadConsole().inputLocation();
+	      //row = Row.values()[location[1]];
+	      //col = Column.values()[location[0]];
+	      //
+		  
+		  if (!this.isGapCell(row, col) && !myBattleMap.getMap(row, col).getIsHit()) {
 	    	  flag = false;
 	      }		  
 	  }
 	  return new Coordinate(col, row);
   }
   
-  private Coordinate smartHitMode(IfleetMap enemyFleetMap, boolean isPreviousHit, boolean isPreviousHitSunk, boolean forseChangeDirection) {
+  private Coordinate smartHitMode(boolean isPreviousHit, boolean isPreviousHitSunk, boolean forseChangeDirection) {
 	  
 	  if (isPreviousModeRandomHit || !isPreviousHit || forseChangeDirection) {
 		  // if previous hit is random hit, we starts from left cell.
@@ -149,18 +152,20 @@ public class SmartStrategy implements Strategy {
 			  StrategyDirection nextDirection = this.findNextDirection(this.previousDirection);
 			  Coordinate coordinate = findNextCoordinate(this.previousRandomHitCoordinate, nextDirection);
 			  this.previousDirection = nextDirection;
-			  if(coordinate != null) {
+			  if(coordinate != null && 
+					  !myBattleMap.getMap(coordinate.getRow(), coordinate.getColumn()).getIsHit()) {
 				  return coordinate;
 			  } 
 		  }		  
 	  } else {
 	     // since we Hit in previous attempt, we pick the right direction, we continue with this direction
 	     Coordinate coordinate = this.findNextCoordinate(this.previousHitCoordinate, this.previousDirection);
-		 if (coordinate != null) {
+		 if (coordinate != null &&
+				 !myBattleMap.getMap(coordinate.getRow(), coordinate.getColumn()).getIsHit()) {
 			 return coordinate;
 		 } else {
 			 //If we need to continue hit in previous direction, but we hit edge, we force to change direction.
-			 return this.smartHitMode(enemyFleetMap, isPreviousHit, isPreviousHitSunk, true);
+			 return this.smartHitMode(isPreviousHit, isPreviousHitSunk, true);
 		 }
 	  }
 	  return null;
@@ -201,7 +206,7 @@ public class SmartStrategy implements Strategy {
   
   
   @Override
-  public Coordinate generateAttackCoordinate(IfleetMap enemyFleetMap, boolean isPreviousHit, boolean isPreviousHitSunk) {
+  public Coordinate generateAttackCoordinate(boolean isPreviousHit, boolean isPreviousHitSunk) {
 	  boolean isCurrentModeRandomHit;
 	  if (isPreviousHitSunk || (isPreviousModeRandomHit && !isPreviousHit)) {
 		  isCurrentModeRandomHit = true;
@@ -212,10 +217,10 @@ public class SmartStrategy implements Strategy {
 	  
 	  Coordinate result = null;
 	  if(isCurrentModeRandomHit) {
-		  result = this.randomHitMode(enemyFleetMap);
+		  result = this.randomHitMode();
 		  this.previousRandomHitCoordinate = result;
 	  }else {
-		  result = this.smartHitMode(enemyFleetMap, isPreviousHit, isPreviousHitSunk, false);
+		  result = this.smartHitMode(isPreviousHit, isPreviousHitSunk, false);
 	  }
 	  
 	  this.isPreviousModeRandomHit = isCurrentModeRandomHit;

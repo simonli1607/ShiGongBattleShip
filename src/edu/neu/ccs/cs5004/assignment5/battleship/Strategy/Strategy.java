@@ -5,6 +5,6 @@ import edu.neu.ccs.cs5004.assignment5.battleship.Maps.IfleetMap;
 
 public interface Strategy {
 
-  Coordinate generateAttackCoordinate(IfleetMap enemyFleetMap, boolean isPreviousHit, boolean isPreviousHitSunk);
+  Coordinate generateAttackCoordinate(boolean isPreviousHit, boolean isPreviousHitSunk);
 
 }

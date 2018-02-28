@@ -5,14 +5,19 @@ import java.util.Random;
 import edu.neu.ccs.cs5004.assignment5.battleship.Enums.Column;
 import edu.neu.ccs.cs5004.assignment5.battleship.Enums.Coordinate;
 import edu.neu.ccs.cs5004.assignment5.battleship.Enums.Row;
+import edu.neu.ccs.cs5004.assignment5.battleship.Maps.IbattleMap;
 import edu.neu.ccs.cs5004.assignment5.battleship.Maps.IfleetMap;
 
 public class RandomStrategy implements Strategy {
-
-
+	
+  private IbattleMap myBattleMap;
+  
+  public RandomStrategy(IbattleMap myBattleMap) {
+	this.myBattleMap = myBattleMap;  
+  }
 
   @Override
-  public Coordinate generateAttackCoordinate(IfleetMap enemyFleetMap, boolean isPreviousHit, boolean isPreviousHitSunk) {
+  public Coordinate generateAttackCoordinate(boolean isPreviousHit, boolean isPreviousHitSunk) {
     Row row;
     Column col;
     while (true) {
@@ -20,7 +25,7 @@ public class RandomStrategy implements Strategy {
       row = Row.values()[rand.nextInt(10)];
       col = Column.values()[rand.nextInt(10)];
 
-      if (enemyFleetMap.getMap(row, col).getIsHit()) {
+      if (myBattleMap.getMap(row, col).getIsHit()) {
         continue;
       }
 

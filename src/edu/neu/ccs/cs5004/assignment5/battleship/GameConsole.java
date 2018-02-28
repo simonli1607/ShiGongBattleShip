@@ -90,13 +90,13 @@ public class GameConsole {
 
   void chooseAttachStrategy(ReadConsole reader, Human human, Computer computer) {
     System.out.println("Please choose attack strategy for human player.");
-    System.out.println("1.User Attack\n2. Random Attack\n3. Smart Strategy");
+    System.out.println("1. User Attack\n2. Random Attack\n3. Smart Strategy");
 
     int num = reader.inputNum(1, 3);
     if (num == 1) {
-      human.setStrategy(new UserStrategy(reader));
+      human.setStrategy(new UserStrategy(reader, human.getIbattleMap()));
     } else if (num == 2) {
-         human.setStrategy(new RandomStrategy());
+         human.setStrategy(new RandomStrategy(human.getIbattleMap()));
     } else {
          human.setStrategy(new SmartStrategy(human.getIbattleMap()));
     }
@@ -106,7 +106,7 @@ public class GameConsole {
 
     num = reader.inputNum(1, 2);
     if (num == 1) {
-         computer.setStrategy(new RandomStrategy());
+         computer.setStrategy(new RandomStrategy(computer.getIbattleMap()));
     } else if (num == 2) {
          computer.setStrategy(new SmartStrategy(computer.getIbattleMap()));
 
