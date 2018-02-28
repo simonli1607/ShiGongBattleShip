@@ -11,6 +11,23 @@ import edu.neu.ccs.cs5004.assignment5.battleship.Enums.StrategyDirection;
 import edu.neu.ccs.cs5004.assignment5.battleship.Maps.IbattleMap;
 import edu.neu.ccs.cs5004.assignment5.battleship.Maps.IfleetMap;
 
+/**
+ * 
+ * @author Shi Gong
+ * 
+ * For the SmartStrategy, we define two mode
+ * Mode1 : random hit
+ * The program start random hit mode when (1)first hit in all game, (2)a enemy ship is sunk in previous attempt.
+ * The program quite random hit mode once it hit any cells in ramdom mode.
+ * When in random hit mode, it randomly hit a cell that is not a gap cell.
+ * 
+ * Mode2:  samrt hit
+ * Once it successfully random hit a cell, the program goes to smart hit mode. It record the cell that it previous
+ * random hit. Then start hit it's neighbor cells in the order of left, up, right and down. It will skip a direction
+ * if it reaches the edge. Once it hit something in one direction, it will continue hit in the same direction in
+ * next attempt until it reaches edge or it hit a water cell, then it change a direction for next attempt.
+ *
+ */
 public class SmartStrategy implements Strategy {
 
   private boolean isPreviousModeRandomHit;
@@ -35,15 +52,7 @@ public class SmartStrategy implements Strategy {
 	  previousDirection = null;
 	  this.myBattleMap = myBattleMap;
   }
-/*
-*
-* 1. Hit : update all variable above
-* 2. IsRandom Hit mode = true:  (1)random genearte a coordinate (2)check isGapCell
-* 3. isPreviousModeRandomHit = false
-* (1) if previousDirection = null or previous hit result = false; start from left -> right> up>down
-* (2) if previousDirection is not null: left for example --> if previousHit =true, keep hitting left
-*                                                             if previousHit = false, keep the other dirrection starting from first hit cell
-* */
+
   
   private boolean isNotEdge(int row, int col){
 	  if(row<0 || row >9) {
