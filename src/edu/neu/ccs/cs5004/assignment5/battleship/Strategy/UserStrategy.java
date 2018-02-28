@@ -19,7 +19,7 @@ public class UserStrategy implements Strategy {
   }
 
   @Override
-  public Coordinate generateAttackCoordinate(IfleetMap enemyFleetMap) {
+  public Coordinate generateAttackCoordinate(IfleetMap enemyFleetMap, boolean isPreviousHit, boolean isPreviousHitSunk) {
     System.out.println("Please enter the location you want to attack:");
     boolean flag = true;
     Row row = null;

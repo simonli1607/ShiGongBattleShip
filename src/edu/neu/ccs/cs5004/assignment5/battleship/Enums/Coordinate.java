@@ -20,4 +20,11 @@ public class Coordinate {
   public Row getRow() {
     return row;
   }
+
+@Override
+public String toString() {
+	return "Coordinate [column=" + column + ", row=" + row + "]";
+}
+  
+  
 }

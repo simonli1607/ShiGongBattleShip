@@ -10,7 +10,7 @@ public interface IbattleMap extends Map {
    *
    * @return
    */
-  public static IbattleMap generateEmptyMap() {
+  static IbattleMap generateEmptyMap() {
     return new BattleMap();
   }
 

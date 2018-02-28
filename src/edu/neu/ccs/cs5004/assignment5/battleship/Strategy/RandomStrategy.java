@@ -12,7 +12,7 @@ public class RandomStrategy implements Strategy {
 
 
   @Override
-  public Coordinate generateAttackCoordinate(IfleetMap enemyFleetMap) {
+  public Coordinate generateAttackCoordinate(IfleetMap enemyFleetMap, boolean isPreviousHit, boolean isPreviousHitSunk) {
     Row row;
     Column col;
     while (true) {

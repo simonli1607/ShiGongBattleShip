@@ -1,9 +1,16 @@
 package edu.neu.ccs.cs5004.assignment5.battleship;
 
+import edu.neu.ccs.cs5004.assignment5.battleship.Controller.Computer;
 import edu.neu.ccs.cs5004.assignment5.battleship.Controller.DebugGame;
 import edu.neu.ccs.cs5004.assignment5.battleship.Controller.Game;
+import edu.neu.ccs.cs5004.assignment5.battleship.Controller.Human;
+import edu.neu.ccs.cs5004.assignment5.battleship.Controller.PlayerAttackResult;
 import edu.neu.ccs.cs5004.assignment5.battleship.Controller.ReadConsole;
 import edu.neu.ccs.cs5004.assignment5.battleship.Controller.RealGame;
+import edu.neu.ccs.cs5004.assignment5.battleship.Strategy.RandomStrategy;
+import edu.neu.ccs.cs5004.assignment5.battleship.Strategy.SmartStrategy;
+import edu.neu.ccs.cs5004.assignment5.battleship.Strategy.Strategy;
+import edu.neu.ccs.cs5004.assignment5.battleship.Strategy.UserStrategy;
 import edu.neu.ccs.cs5004.assignment5.battleship.Viewer.ConsolePrinter;
 
 
@@ -33,16 +40,22 @@ public class GameConsole {
     System.out.println("Finish fleet maps set up. Let's start!");
     System.out.println("----------------------------------------");
 
+    gameConsole.chooseAttachStrategy(reader, game.getHuman(), game.getComputer());
+
     int sunkShipNum1 = 0;
     int sunkShipNum2 = 0;
     int shipNum = game.getComputer().getIbattleMap().getBattleshipNum()
-        + game.getComputer().getIbattleMap().getCruiserNum()
-        + game.getComputer().getIbattleMap().getSubmarineNum()
-        + game.getComputer().getIbattleMap().getDestroyerNum();
-
+            + game.getComputer().getIbattleMap().getCruiserNum()
+            + game.getComputer().getIbattleMap().getSubmarineNum()
+            + game.getComputer().getIbattleMap().getDestroyerNum();
+    
+    PlayerAttackResult humanAttackResult = new PlayerAttackResult(null, false, false, 0);
+    PlayerAttackResult computerAttackResult = new PlayerAttackResult(null, false, false, 0);
+    
     while (true) {
       //human turn to attack;
-      sunkShipNum1 = game.getHuman().humanTurn(reader, game.getComputer(), sunkShipNum1);
+      humanAttackResult = game.getHuman().humanTurn(reader, game.getComputer(), sunkShipNum1, humanAttackResult);
+      sunkShipNum1 = humanAttackResult.getSunkCount();
       System.out.println("Enemy Sunk Ship number is " + sunkShipNum1);
       if (sunkShipNum1 == shipNum) {
         gameConsole.printMaps(game);
@@ -51,7 +64,8 @@ public class GameConsole {
       }
 
       //computer turn to attack
-      sunkShipNum2 = game.getComputer().computerTurn(game.getHuman(), sunkShipNum2);
+      computerAttackResult = game.getComputer().computerTurn(game.getHuman(), sunkShipNum2, computerAttackResult);
+      sunkShipNum2 = computerAttackResult.getSunkCount();
       if (sunkShipNum2 == shipNum) {
         gameConsole.printMaps(game);
         System.out.println("Game over, the winner is the Computer.");
@@ -66,11 +80,36 @@ public class GameConsole {
     System.out.println("Which mode do you want to play?");
     System.out.println("1. Game Mode\n2. Debug Mode");
 
-    int num = reader.inputNum(1,2);
-    if(num == 1){
+    int num = reader.inputNum(1, 2);
+    if (num == 1) {
       return new RealGame();
-    }else {
+    } else {
       return new DebugGame();
+    }
+  }
+
+  void chooseAttachStrategy(ReadConsole reader, Human human, Computer computer) {
+    System.out.println("Please choose attack strategy for human player.");
+    System.out.println("1.User Attack\n2. Random Attack\n3. Smart Strategy");
+
+    int num = reader.inputNum(1, 3);
+    if (num == 1) {
+      human.setStrategy(new UserStrategy(reader));
+    } else if (num == 2) {
+         human.setStrategy(new RandomStrategy());
+    } else {
+         human.setStrategy(new SmartStrategy(human.getIbattleMap()));
+    }
+
+    System.out.println("Please choose attack strategy for computer player.");
+    System.out.println("1. Random Attack\n2. Smart Strategy");
+
+    num = reader.inputNum(1, 2);
+    if (num == 1) {
+         computer.setStrategy(new RandomStrategy());
+    } else if (num == 2) {
+         computer.setStrategy(new SmartStrategy(computer.getIbattleMap()));
+
     }
   }
 

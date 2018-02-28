@@ -1,7 +1,9 @@
 package edu.neu.ccs.cs5004.assignment5.battleship.Controller;
 
 
+import edu.neu.ccs.cs5004.assignment5.battleship.Cells.EnemyShipCell;
 import edu.neu.ccs.cs5004.assignment5.battleship.Enums.Column;
+import edu.neu.ccs.cs5004.assignment5.battleship.Enums.Coordinate;
 import edu.neu.ccs.cs5004.assignment5.battleship.Enums.Direction;
 import edu.neu.ccs.cs5004.assignment5.battleship.Enums.Row;
 import edu.neu.ccs.cs5004.assignment5.battleship.Ships.Battleship;
@@ -9,16 +11,21 @@ import edu.neu.ccs.cs5004.assignment5.battleship.Ships.Cruiser;
 import edu.neu.ccs.cs5004.assignment5.battleship.Ships.Destoryer;
 import edu.neu.ccs.cs5004.assignment5.battleship.Ships.Ship;
 import edu.neu.ccs.cs5004.assignment5.battleship.Ships.Submarine;
+import edu.neu.ccs.cs5004.assignment5.battleship.Strategy.Strategy;
 import edu.neu.ccs.cs5004.assignment5.battleship.Viewer.ConsolePrinter;
 
 
 public class Human extends AbstractPlayer implements Player {
 
+  private Strategy strategy;
 
   public Human() {
     super();
   }
 
+  public void setStrategy(Strategy strategy) {
+    this.strategy = strategy;
+  }
 
   @Override
   public void placeShips() {
@@ -138,34 +145,23 @@ Ship chooseShipType(ReadConsole reader){
   }
 
 
-  public Integer humanTurn(ReadConsole reader, Computer computer, Integer sunkShipNum) {
+  public PlayerAttackResult humanTurn(ReadConsole reader, Computer computer, Integer sunkShipNum, PlayerAttackResult previousResult) {
     System.out.println("Player's turn:");
-    System.out.println("Please enter the location you want to attack:");
-    boolean flag = true;
-    Row row = null;
-    Column col = null;
-    while(flag) {
-    	try {
-	    	int location[] = reader.inputLocation();
-	    	row = Row.values()[location[1]];
-	    	col = Column.values()[location[0]];
-	    	boolean isCellHitBefore = computer.getIfleetMap().getMap(row, col).getIsHit();
-	    	if (isCellHitBefore) {
-	    		throw new CellHasBeenHitByUserException();
-	    	}
-	    	flag = false;
-    	} catch(CellHasBeenHitByUserException e) {
-    		System.out.println("You attached this cell before, please choose a different one");
-    	}
-    }
-    
-    int sunkCount = computer.getIfleetMap().attack(row, col, sunkShipNum);
-    this.getIbattleMap().attack(computer, row, col);
-    return sunkCount;
 
+    Coordinate coordinate = strategy.generateAttackCoordinate(computer.ifleetMap, previousResult.isHit(), previousResult.isShipSunk());
+    System.out.println("Player choose to attack " + (char)(coordinate.getColumn().ordinal() + 65) + (coordinate.getRow().ordinal
+            () + 1));
+    int sunkCount = computer.getIfleetMap().attack(coordinate.getRow(), coordinate.getColumn(), sunkShipNum);
+    this.getIbattleMap().attack(computer, coordinate.getRow(), coordinate.getColumn());
+    
+    boolean isHit = this.getIbattleMap().getMap(coordinate.getRow(), coordinate.getColumn()) instanceof EnemyShipCell;
+    boolean isSunk = sunkCount - sunkShipNum == 1;
+    
+    return new PlayerAttackResult(coordinate, isHit, isSunk, sunkCount);
+
+  }
+
+  public class CellHasBeenHitByUserException extends Exception{
   }
   
-  public class CellHasBeenHitByUserException extends Exception{	  
-  }
-
 }
